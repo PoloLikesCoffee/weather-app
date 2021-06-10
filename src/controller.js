@@ -23,10 +23,11 @@ const initializeControl = (function () {
 	//get data of the city from the weather api
 	const getLatAndLon = async (city) => {
 		try {
-			const location = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&APPID=1cb9e5f573b458ac716c37894169b7cd`;
+			const location = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&&lang=ja&APPID=1cb9e5f573b458ac716c37894169b7cd`;
 			const response = await fetch(location, { mode: 'cors' });
 			if (!response.ok) throw new Error(`City ${city} not found`);
 			const weatherDataCity = await response.json();
+			// console.log(weatherDataCity);
 			return weatherDataCity;
 		} catch (error) {
 			alert(error);
@@ -36,9 +37,10 @@ const initializeControl = (function () {
 	//get forecast of the city from the weather api
 	const getForecast = async (lat, lon) => {
 		try {
-			const location = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&appid=1cb9e5f573b458ac716c37894169b7cd`;
+			const location = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&&lang=ja&appid=1cb9e5f573b458ac716c37894169b7cd`;
 			const response = await fetch(location, { mode: 'cors' });
 			const forecastDataCity = await response.json();
+			// console.log(forecastDataCity);
 			const data = convertData(forecastDataCity);
 			return data;
 		} catch (error) {
@@ -49,7 +51,8 @@ const initializeControl = (function () {
 	//convert the data of the city and return an object
 	const convertData = (data) => {
 		const objectCity = {
-			date: data.daily[0].dt,
+			// date: data.daily[0].dt,
+			date: getLocalTime(data.timezone_offset),
 			temp: Math.round(data.current.temp * 10) / 10,
 			icon: data.current.weather[0].icon,
 			feels: Math.round(data.current.feels_like * 10) / 10,
@@ -59,43 +62,43 @@ const initializeControl = (function () {
 
 			daily: [
 				{
-					day: data.daily[1].dt,
+					day: getLocalTime(data.timezone_offset) + 1000 * 3600 * 24,
 					max_temp: Math.round(data.daily[1].temp.max * 10) / 10,
 					min_temp: Math.round(data.daily[1].temp.min * 10) / 10,
 					icon: data.daily[1].weather[0].icon,
 				},
 				{
-					day: data.daily[2].dt,
+					day: getLocalTime(data.timezone_offset) + 1000 * 3600 * 48,
 					max_temp: Math.round(data.daily[2].temp.max * 10) / 10,
 					min_temp: Math.round(data.daily[2].temp.min * 10) / 10,
 					icon: data.daily[2].weather[0].icon,
 				},
 				{
-					day: data.daily[3].dt,
+					day: getLocalTime(data.timezone_offset) + 1000 * 3600 * 72,
 					max_temp: Math.round(data.daily[3].temp.max * 10) / 10,
 					min_temp: Math.round(data.daily[3].temp.min * 10) / 10,
 					icon: data.daily[3].weather[0].icon,
 				},
 				{
-					day: data.daily[4].dt,
+					day: getLocalTime(data.timezone_offset) + 1000 * 3600 * 96,
 					max_temp: Math.round(data.daily[4].temp.max * 10) / 10,
 					min_temp: Math.round(data.daily[4].temp.min * 10) / 10,
 					icon: data.daily[4].weather[0].icon,
 				},
 				{
-					day: data.daily[5].dt,
+					day: getLocalTime(data.timezone_offset) + 1000 * 3600 * 120,
 					max_temp: Math.round(data.daily[5].temp.max * 10) / 10,
 					min_temp: Math.round(data.daily[5].temp.min * 10) / 10,
 					icon: data.daily[5].weather[0].icon,
 				},
 				{
-					day: data.daily[6].dt,
+					day: getLocalTime(data.timezone_offset) + 1000 * 3600 * 144,
 					max_temp: Math.round(data.daily[6].temp.max * 10) / 10,
 					min_temp: Math.round(data.daily[6].temp.min * 10) / 10,
 					icon: data.daily[6].weather[0].icon,
 				},
 				{
-					day: data.daily[7].dt,
+					day: getLocalTime(data.timezone_offset) + 1000 * 3600 * 168,
 					max_temp: Math.round(data.daily[7].temp.max * 10) / 10,
 					min_temp: Math.round(data.daily[7].temp.min * 10) / 10,
 					icon: data.daily[7].weather[0].icon,
@@ -117,8 +120,20 @@ const initializeControl = (function () {
 			'[data-city-display-container]'
 		);
 		cityDisplayContainer.classList.add('display-ok');
+		//animation
+		cityDisplayContainer.classList.add('appear-right');
+		setTimeout(function () {
+			cityDisplayContainer.classList.remove('appear-right');
+		}, 500);
+
 		const cityTitleEl = document.querySelector('[data-city-title]');
-		cityTitleEl.innerText = name;
+		//console.log(name.length);
+		if (name.length >= 20) {
+			cityTitleEl.style.fontSize = '1.5rem';
+			cityTitleEl.innerText = name;
+		} else if (name.length < 20) {
+			cityTitleEl.innerText = name;
+		}
 		const cityTempEl = document.querySelector('[data-city-temperature]');
 		cityTempEl.innerHTML = `<span data-main-t>${cityInfo.temp}</span> <span data-unit-t>°C</span>`;
 		const cityIconTempEl = document.querySelector(
@@ -126,8 +141,19 @@ const initializeControl = (function () {
 		);
 		cityIconTempEl.innerHTML = convertTextToIcon(cityInfo.icon);
 		const cityDateEl = document.querySelector('[data-city-date]');
-		cityDateEl.innerText = `${cityInfo.date}`;
-		//cityDateEl.innerText = `${convertNumberToDate(cityInfo.date)}`;
+		//day and time
+		cityDateEl.innerHTML = `<i class="fas fa-calendar-day"></i> <span class="day-city">${new Date(
+			cityInfo.date
+		).toLocaleString('ja-JP', {
+			weekday: 'long',
+			month: 'long',
+			day: 'numeric',
+		})}</span> <i class="far fa-clock"></i> <span class="time-city">${new Date(
+			cityInfo.date
+		).toLocaleString('ja-JP', {
+			hour: '2-digit',
+			minute: '2-digit',
+		})}</span>`;
 
 		const cityFeelsEl = document.querySelector('[data-city-feels]');
 		cityFeelsEl.innerHTML = `<span data-feels-t>${cityInfo.feels}</span> <span data-unit-t>°C</span>`;
@@ -143,12 +169,19 @@ const initializeControl = (function () {
 			'[data-daily-display-container]'
 		);
 		dailyDisplayContainer.classList.add('display-ok');
+		//animation
+		dailyDisplayContainer.classList.add('appear-right');
+		setTimeout(function () {
+			dailyDisplayContainer.classList.remove('appear-right');
+		}, 500);
 		clearElement(dailyDisplayContainer);
 		cityInfo.daily.forEach((day, index) => {
 			const dayEl = document.createElement('div');
 			dayEl.classList.add('daily-body');
 			dayEl.innerHTML = `
-                <h2 class="day">${day.day}</h2>
+                <h2 class="day">${new Date(day.day).toLocaleString('ja-JP', {
+									weekday: 'short',
+								})}</h2>
                 <div class="max-temp" data-max-temp><span data-max-t>${
 									day.max_temp
 								}</span> <span data-max-unit-t>°C</span></div>
@@ -303,11 +336,13 @@ const initializeControl = (function () {
 		} else if (logoText === '03d' || logoText === '03n') {
 			return `<i class="fas fa-cloud"></i>`;
 		} else if (logoText === '04d' || logoText === '04n') {
-			return `<i class="fas fa-cloud"></i> <div class="second-cloud"><i class="fas fa-cloud"></i></div>`;
+			// return `<i class="fas fa-cloud"></i> <div class="second-cloud"><i class="fas fa-cloud"></i></div>`;
+			return `<i class="fas fa-cloud"></i>`;
 		} else if (logoText === '09d' || logoText === '09n') {
 			return `<i class="fas fa-cloud-rain"></i>`;
 		} else if (logoText === '10d' || logoText === '10n') {
-			return `<i class="fas fa-cloud-showers-heavy"></i> <div class="second-cloud-shower"><i class="fas fa-cloud"></i></div>`;
+			// return `<i class="fas fa-cloud-showers-heavy"></i> <div class="second-cloud-shower"><i class="fas fa-cloud"></i></div>`;
+			return `<i class="fas fa-cloud-showers-heavy"></i>`;
 		} else if (logoText === '11d' || logoText === '11n') {
 			return `<i class="fas fa-poo-storm"></i>`;
 		} else if (logoText === '13d' || logoText === '13n') {
@@ -324,12 +359,25 @@ const initializeControl = (function () {
 		}
 	};
 
-	const convertNumberToDate = (date) => {
-		const dateObject = new Date(date);
-
-		const humanDateFormat = dateObject.toLocaleString();
-
-		return humanDateFormat;
+	// local time
+	const getLocalTime = (data) => {
+		let date = new Date();
+		let time = date.getTime();
+		let localOffset = date.getTimezoneOffset() * 60000;
+		let utc = time + localOffset;
+		let localTime = utc + 1000 * data;
+		// let localTimeDate = new Date(localTime);
+		// let options = {
+		// 	weekday: 'short',
+		// 	year: 'numeric',
+		// 	month: 'long',
+		// 	day: 'numeric',
+		// 	hour: '2-digit',
+		// 	minute: '2-digit',
+		// 	second: '2-digit',
+		// };
+		// return localTimeDate.toLocaleString('en-US', options);
+		return localTime;
 	};
 
 	return {
