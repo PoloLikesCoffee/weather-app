@@ -48,7 +48,7 @@ const initializeDOM = (function () {
 
             <div class="city-body">
                 <div class="info-city"> 
-                    <h3><i class="fas fa-thermometer-half"></i> のような感じ</h3>
+                    <h3><i class="fas fa-thermometer-half"></i> 体感温度</h3>
                     <p data-city-feels></p>
                 </div>
                 <div class="info-city"> 

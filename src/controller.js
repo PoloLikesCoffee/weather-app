@@ -23,7 +23,7 @@ const initializeControl = (function () {
 	//get data of the city from the weather api
 	const getLatAndLon = async (city) => {
 		try {
-			const location = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&&lang=ja&APPID=1cb9e5f573b458ac716c37894169b7cd`;
+			const location = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&&lang=ja&APPID=1cb9e5f573b458ac716c37894169b7cd`;
 			const response = await fetch(location, { mode: 'cors' });
 			if (!response.ok) throw new Error(`City ${city} not found`);
 			const weatherDataCity = await response.json();
