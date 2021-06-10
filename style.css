@@ -28,33 +28,34 @@ body {
 	font-family: var(--font-family);
 	font-size: 1.2rem;
 	color: var(--color-black);
+	overflow: hidden;
 }
 
 /* website layout*/
 #content {
 	display: grid;
-	grid-template-columns: 0.1fr 0.5fr 1fr 0.1fr;
-	grid-template-rows: 0.1fr 1.5fr 0.2fr;
+	grid-template-columns: 0.1fr 0.4fr 0.7fr 0.1fr;
+	grid-template-rows: 0.1fr 1fr 0.2fr;
 	grid-template-areas:
 		'header header header header'
 		'...... search city ........'
 		'daily daily daily daily';
-	grid-gap: 0.3rem;
+	grid-gap: 0.2rem;
 }
 
 .header {
 	grid-area: header;
 	color: var(--color-beige);
-	font-size: calc(7vw + 2rem);
-	font-weight: bold;
-	/* letter-spacing: 2px; */
-	text-align: center;
-	margin: 0 0.5rem 0.5rem 0.5rem;
 	background-color: var(--color-yellow);
+	font-size: calc(7vw + 0.3rem);
+	font-weight: bold;
+	text-align: center;
+	padding: 0;
+	margin: -1rem 0.5rem 0.5rem 0.5rem;
 }
 
 .header i {
-	font-size: calc(7vw + 1.2rem);
+	font-size: calc(7vw + 0.2rem);
 }
 
 .search-container {
@@ -132,7 +133,7 @@ form {
 }
 
 .city-header {
-	padding: var(--spacer);
+	padding: 1rem;
 	background-color: var(--color-white);
 	display: flex;
 	align-items: center;
@@ -147,11 +148,12 @@ form {
 }
 
 .city-title {
-	font-size: 2.2rem;
+	font-size: 2rem;
 }
 
 .city-temperature {
-	font-size: 2.8rem;
+	font-size: 2rem;
+	width: fit-content;
 }
 
 .icon-temperature {
@@ -192,7 +194,7 @@ form {
 	justify-content: center;
 	align-items: center;
 	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.2));
-	transform: translate(0, 70px);
+	transform: translate(0, 50px);
 }
 
 .triangle {
@@ -207,14 +209,30 @@ form {
 }
 
 .city-date {
-	font-style: italic;
 	font-weight: 400;
 	margin: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.city-date i {
 	font-size: 0.8rem;
+	margin-right: 0.2rem;
+}
+
+.day-city {
+	font-size: 0.9rem;
+	margin-right: 0.5rem;
+}
+
+.time-city {
+	text-transform: lowercase;
+	font-size: 0.9rem;
 }
 
 .city-body {
-	padding: var(--spacer);
+	padding: 1rem;
 	width: 100%;
 	background: var(--color-beige);
 }
@@ -224,13 +242,14 @@ form {
 }
 
 .info-city {
+	font-size: 1rem;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
 	width: 100%;
 	padding: 0 1rem;
-	margin: 2rem 0 1rem 0;
+	margin: 1rem 0 1rem 0;
 }
 
 .info-city h3 {
@@ -241,7 +260,7 @@ form {
 .info-city p {
 	margin: 0;
 	padding: 0;
-	font-size: 1.5rem;
+	font-size: 1rem;
 }
 
 .degree-stuff {
@@ -253,7 +272,7 @@ form {
 	/* bottom: -17px; */
 	bottom: 0;
 	background-color: transparent;
-	padding: 1rem;
+	padding: 1rem 1rem 0.5rem 1rem;
 }
 
 .degree-stuff i {
@@ -285,7 +304,7 @@ form {
 	display: none;
 	flex-direction: row;
 	justify-content: center;
-	padding: 1rem;
+	padding: 0 1rem;
 }
 
 .daily-container.display-ok {
@@ -297,25 +316,67 @@ form {
 	flex-direction: column;
 	align-items: center;
 	width: 14%;
-	height: 200px;
 	color: var(--color-beige);
 }
 
 .day {
-	font-size: 1.4rem;
+	font-size: 1.6rem;
 	margin: 0;
-	padding-bottom: 1rem;
+	padding-bottom: 0.3rem;
 }
 
 .max-temp {
-	font-size: 2rem;
-	padding-bottom: 0.4rem;
+	font-size: 1.4rem;
+	padding-bottom: 0.3rem;
 }
 
 .min-temp {
-	padding-bottom: 0.4rem;
+	font-size: 1.1rem;
+	padding-bottom: 0.3rem;
 }
 
 .icon-temp {
-	font-size: 3rem;
+	font-size: 2.2rem;
+}
+
+/*animation*/
+.appear-center {
+	opacity: 0;
+	transform: scale(0);
+	animation: fromTheCenter 500ms ease-in forwards;
+}
+
+@keyframes fromTheCenter {
+	0% {
+		opacity: 0.2;
+		transform: scale(0.2);
+	}
+	50% {
+		opacity: 0.5;
+		transform: scale(1.2);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.appear-right {
+	opacity: 0;
+	animation: fromTheRight 500ms ease-in forwards;
+}
+
+@keyframes fromTheRight {
+	0% {
+		opacity: 0.2;
+		transform: translateX(500px);
+	}
+	50% {
+		opacity: 0.7;
+		transform: translateX(-15px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
 }
